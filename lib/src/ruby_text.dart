@@ -85,10 +85,12 @@ class RubySpanWidget extends HookWidget {
     final texts = <Widget>[];
     if (data.ruby != null) {
       texts.add(
-        Text(
-          data.ruby!,
-          textAlign: TextAlign.center,
-          style: effectiveRubyTextStyle,
+        SelectionContainer.disabled(
+          child: Text(
+            data.ruby!,
+            textAlign: TextAlign.center,
+            style: effectiveRubyTextStyle,
+          ),
         ),
       );
     }
