@@ -28,7 +28,7 @@ class RubySpanWidget extends HookWidget {
         }
         assert(effectiveTextStyle.fontSize != null, 'must be has a font size.');
         final defaultRubyTextStyle = effectiveTextStyle.merge(
-          TextStyle(fontSize: effectiveTextStyle.fontSize! / 1.5),
+          TextStyle(fontSize: effectiveTextStyle.fontSize! / 2),
         );
 
         // ruby text style
@@ -84,12 +84,34 @@ class RubySpanWidget extends HookWidget {
 
     final texts = <Widget>[];
     if (data.ruby != null) {
+      final rubyWidth = _measurementWidth(
+        data.ruby!,
+        effectiveRubyTextStyle,
+        textDirection: data.textDirection ?? textDirection ?? TextDirection.ltr,
+      );
+      final textWidth = _measurementWidth(
+        data.text,
+        effectiveTextStyle,
+        textDirection: data.textDirection ?? textDirection ?? TextDirection.ltr,
+      );
+      final scaleX = textWidth < rubyWidth ? textWidth / rubyWidth : 1.0;
+
       texts.add(
-        SelectionContainer.disabled(
-          child: Text(
-            data.ruby!,
-            textAlign: TextAlign.center,
-            style: effectiveRubyTextStyle,
+        ConstrainedBox(
+          constraints: BoxConstraints(
+            maxWidth: textWidth,
+          ),
+          child: Transform(
+            transform: Matrix4.diagonal3Values(scaleX, 1, 1),
+            child: SelectionContainer.disabled(
+              child: Text(
+                data.ruby!,
+                textAlign: TextAlign.center,
+                overflow: TextOverflow.visible,
+                softWrap: false,
+                style: effectiveRubyTextStyle,
+              ),
+            ),
           ),
         ),
       );
